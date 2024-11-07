@@ -10,10 +10,19 @@
        image: ''
      })
    }})
+
+  const handleEditClick = () => {
+    window.alert('Edit clicked')
+  }
+
+  const handleDeleteClick = () => {
+    window.alert('Delete clicked')
+  }
+
 </script>
 
 <template>
-  <UCard>
+  <UCard onclick="window.alert('Card clicked')">
     <template #header>
       <h1>{{ media.title }}</h1>
     </template>
@@ -30,6 +39,7 @@
             label="Edit"
             :trailing="false"
             :class="['mr-2']"
+            @click.stop="handleEditClick"
         />
         <UButton
             icon="i-heroicons-trash"
@@ -38,6 +48,7 @@
             variant="outline"
             label="Delete"
             :trailing="false"
+            @click.stop="handleDeleteClick"
         />
       </div>
     </template>
