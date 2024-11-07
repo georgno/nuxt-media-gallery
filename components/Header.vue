@@ -1,19 +1,28 @@
 <script setup lang="ts">
 const store = useModalsStore();
 
-const links = [[
+const leftMenu = [
   {
     label: 'Home',
     icon: 'i-heroicons-home',
     to: '/',
     badge: 1
-  }], [{
+  },
+  {
+    label: 'Bulk',
+    icon: 'i-heroicons-table-cells',
+    to: '/medias/bulk-editing'
+  }];
+
+const rightMenu = [{
   label: 'Add',
   icon: 'i-heroicons-plus',
   click: () => {
     store.create = true;
   }
-}]]
+}];
+
+const links = [leftMenu, rightMenu]
 
 const state = reactive({
   file: undefined,
