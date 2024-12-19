@@ -1,19 +1,26 @@
 <script setup lang="ts">
-import Header from "~/components/Header.vue";
-import DefaultLayout from "~/components/DefaultLayout.vue";
 
 const route = useRoute()
+
+const counter = useState('counter', () => Math.round(Math.random() * 1000))
 
 </script>
 
 
 <template>
-  <DefaultLayout>
     <div>
       <h1>Bulk Editing</h1>
-    </div>
-  </DefaultLayout>
 
+      <div>
+        Counter: {{ counter }}
+        <button @click="counter++">
+          +
+        </button>
+        <button @click="counter--">
+          -
+        </button>
+      </div>
+    </div>
 </template>
 
 <style scoped>

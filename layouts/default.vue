@@ -1,11 +1,7 @@
-<script setup lang="ts">
-import Header from '~/components/Header.vue';
-</script>
-
 <template>
   <div>
     <Header />
-    <div class="mx-3">
+    <div class="mx-3 mt-5">
       <slot />
     </div>
   </div>
