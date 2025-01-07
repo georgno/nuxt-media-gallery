@@ -1,16 +1,14 @@
 <script setup lang="ts">
 import MediaCard from "~/components/MediaCard.vue";
 
-interface Media {
-  id: number
-  type: string
-  path: string
-  alt: string
-}
+const mediaStore = useMediaStore();
 
-const mh = mediaHandler();
+await mediaStore.fetchMedias();
 
-const medias = await mh.getAllMedias();
+const medias = computed(() => {
+  console.log('Media items:', mediaStore.items);
+  return mediaStore.items.filter(item => item && item.id);
+});
 
 </script>
 

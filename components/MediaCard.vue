@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useMediaStore } from '~/stores/media';
+
  defineProps({
    media: {
      type: Object,
@@ -15,6 +17,8 @@
 
   const mh = mediaHandler();
 
+  const mediaStore = useMediaStore();
+
   const handleEditClick = (media) => {
     router.push({
       path: `/medias/update/${media.id}`,
@@ -24,6 +28,7 @@
   const handleDeleteClick = (media) => {
     console.log(media);
     mh.deleteItem(media.id);
+    mediaStore.deleteMedia(media.id);
   }
 
  const router = useRouter();
@@ -37,47 +42,17 @@
 </script>
 
 <template>
-  <UCard @click="cardAction(media)">
-
-    <div class="flex">
-      <div class="flex flex-row w-40">
-          <MediaImage :media="media"></MediaImage>
+  <q-card class="my-card" @click="cardAction(media)" :class="$q.dark.isActive ? 'bg-white' : 'bg-grey-9'">
+    <q-img :src="media.path" style="height: 250px;" position="top">
+      <div class="absolute-bottom">
+        <div class="text-h6">{{ media.title }}</div>
+        <div class="text-subtitle2">{{ media.alt }}</div>
       </div>
-      <div class="flex flex-1 flex-col justify-between">
-        <div class="ps-3">
-          <h1 class="text-2xl">{{ media.title }}</h1>
-          <h2 class="text-sm text-gray-500">{{ media.alt }}</h2>
-        </div>
+    </q-img>
 
-          <div class="flex justify-end">
-            <UButton
-                icon="i-heroicons-pencil-square"
-                size="sm"
-                color="primary"
-                variant="solid"
-                label="Edit"
-                :trailing="false"
-                @click.stop="handleEditClick(media)"
-                class="me-2"
-            />
-            <UButton
-                icon="i-heroicons-trash"
-                size="sm"
-                color="red"
-                variant="outline"
-                label="Delete"
-                :trailing="false"
-                @click.stop="handleDeleteClick(media)"
-            />
-          </div>
-      </div>
-    </div>
-
-  </UCard>
+    <q-card-actions align="right">
+      <q-btn flat icon="edit" @click.stop="handleEditClick(media)" :class="$q.dark.isActive ? 'text-black' : 'text-white'"/>
+      <q-btn flat icon="delete" @click.stop="handleDeleteClick(media)" :class="$q.dark.isActive ? 'text-black' : 'text-white'"/>
+    </q-card-actions>
+  </q-card>
 </template>
-
-
-
-<style scoped>
-
-</style>
