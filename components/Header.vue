@@ -1,24 +1,40 @@
 <script setup lang="ts">
 const store = useModalsStore();
 
+const db = mediaHandler();
+
 const leftMenu = [
   {
     label: 'Home',
     icon: 'i-heroicons-home',
     to: '/',
-    badge: 1
+    badge: await db.getMediaCount(),
   },
   {
     label: 'Bulk',
     icon: 'i-heroicons-table-cells',
     to: '/medias/bulk-editing'
-  }];
+  },
+  {
+    label: 'Map',
+    icon: 'i-heroicons-map',
+    to: '/medias/map'
+  }
+];
+
+let publicNuxtPath = '/test.jpg';
 
 const rightMenu = [{
   label: 'Add',
   icon: 'i-heroicons-plus',
-  click: () => {
-    store.create = true;
+  click: async () => {
+    // store.create = true;
+    await db.create({
+      id: await db.getNextKey(),
+      title: 'test-name',
+      alt: 'test-file',
+      path: publicNuxtPath
+    });
   }
 }];
 
@@ -37,8 +53,11 @@ const validate = (state: any): FormError[] => {
 }
 
 async function onSubmit(event: FormSubmitEvent<any>) {
-  // Do something with data
-  console.log(event.data)
+  event.preventDefault();
+
+  // get the data from the form
+
+  store.create = false;
 }
 
 
@@ -49,7 +68,7 @@ async function onSubmit(event: FormSubmitEvent<any>) {
     <UForm :validate="validate" :state="state" class="space-y-4" @submit="onSubmit">
       <div class="p-4">
         <h1 class="text-xl font-bold mb-3">Create Media</h1>
-        <UFormGroup label="Image" name="Image" required>
+        <UFormGroup label="Image" name="Image">
           <UInput type="file" size="sm" icon="i-heroicons-folder" v-model="state.file" />
         </UFormGroup>
         <UFormGroup label="Name" name="Name" required class="mt-3">

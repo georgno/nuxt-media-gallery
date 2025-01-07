@@ -13,14 +13,17 @@
      })
    }})
 
+  const mh = mediaHandler();
+
   const handleEditClick = (media) => {
     router.push({
       path: `/medias/update/${media.id}`,
     });
   }
 
-  const handleDeleteClick = () => {
-    window.alert('Delete clicked')
+  const handleDeleteClick = (media) => {
+    console.log(media);
+    mh.deleteItem(media.id);
   }
 
  const router = useRouter();
@@ -64,7 +67,7 @@
                 variant="outline"
                 label="Delete"
                 :trailing="false"
-                @click.stop="handleDeleteClick"
+                @click.stop="handleDeleteClick(media)"
             />
           </div>
       </div>

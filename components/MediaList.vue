@@ -10,13 +10,13 @@ interface Media {
 
 const mh = mediaHandler();
 
-console.log(mh);
+const medias = await mh.getAllMedias();
 
 </script>
 
 <template>
   <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-    <MediaCard v-for="item in mh" :key="item.id" :media="item" />
+    <MediaCard v-for="item in medias" :key="item.id" :media="item" />
   </div>
 </template>
 
