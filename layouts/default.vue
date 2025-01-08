@@ -20,7 +20,12 @@
           <q-list>
 
             <template v-for="(menuItem, index) in menuList" :key="index">
-              <q-item clickable :active="menuItem.label === 'Outbox'" v-ripple>
+              <q-item 
+                clickable 
+                :to="menuItem.to"
+                :active="$route.path === menuItem.to" 
+                v-ripple
+              >
                 <q-item-section avatar :class="$q.dark.isActive ? 'text-black' : 'text-white'">
                   <q-icon :name="menuItem.icon" />
                 </q-item-section>
@@ -60,12 +65,14 @@ const menuList = [
   {
     icon: 'home',
     label: 'Home',
-    separator: true
+    separator: true,
+    to: '/'
   },
   {
     icon: 'map',
     label: 'Map',
-    separator: true
+    separator: true,
+    to: 'medias/map'
   }
 ]
 
