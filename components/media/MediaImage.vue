@@ -15,8 +15,12 @@ defineProps({
 </script>
 
 <template>
-  <div class="bg-amber-50 rounded-lg">
-    <NuxtImg :src="media.path" placeholder class="aspect-1 object-cover rounded-lg"/>
+  <div class="bg-amber-50 rounded-lg w-full">
+    <q-img
+        :src="media.path"
+        spinner-color="white"
+        fit="cover"
+    />
   </div>
 </template>
 

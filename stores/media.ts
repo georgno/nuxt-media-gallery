@@ -1,21 +1,39 @@
-import { defineStore } from 'pinia'
-import type { Media } from '~/composables/mediaHandler'
+import {defineStore} from 'pinia'
+import type {Media} from '~/composables/mediaHandler'
 
 export const useMediaStore = defineStore('media', {
   state: () => ({
-    items: [] as Media[]
+    items: [] as Media[],
+    loading: false
   }),
   actions: {
+    async initializeMedia() {
+      if (this.loading || Object.keys(this.items).length > 0) return
+      
+      this.loading = true
+      try {
+        await this.fetchMedias()
+
+      } catch (error) {
+        console.error('Failed to initialize media:', error)
+      } finally {
+        this.loading = false
+      }
+    },
     async fetchMedias() {
       const mh = mediaHandler()
-      const medias = await mh.getAllMedias()
-      this.items = medias
+      this.items = await mh.getAllMedias()
     },
     addMedia(media: Media) {
       this.items.push(media)
     },
     deleteMedia(id: number) {
         this.items = this.items.filter(item => item.id !== id);
+    },
+    getMedia(id: number) {
+      console.log('all items', this.items)
+      console.log('getMedia', id)
+      return this.items.find(item => item.id === id)
     }
   }
 })

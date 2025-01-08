@@ -36,7 +36,7 @@
       </q-drawer>
 
     <q-page-container>
-      <q-page padding>
+      <q-page padding class="px-5 py-4">
         <slot />
       </q-page>
     </q-page-container>
@@ -68,5 +68,11 @@ const menuList = [
     separator: true
   }
 ]
+
+const mediaStore = useMediaStore()
+
+onMounted(async () => {
+  await mediaStore.initializeMedia()
+})
 
 </script>
