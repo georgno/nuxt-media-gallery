@@ -5,7 +5,7 @@
         <q-toolbar>
           <q-btn flat @click="drawer = !drawer" round dense icon="menu" />
           <q-toolbar-title></q-toolbar-title>
-          <q-btn flat round dense :icon="$q.dark.isActive ? 'dark_mode' : 'light_mode'" @click="$q.dark.toggle()" />
+          <q-btn flat round :icon="isDark ? 'dark_mode' : 'light_mode'" @click="toggleDarkMode" />
         </q-toolbar>
       </q-header>
       <q-drawer
@@ -54,9 +54,12 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useDarkMode } from '~/composables/darkMode'
+
 const $q = useQuasar()
 const drawer = ref(false)
-$q.dark.toggle()
+const { isDark, toggleDarkMode } = useDarkMode()
+
 watch(() => $q.dark.isActive, val => {
   console.log(val ? 'On dark mode' : 'On light mode')
 })
