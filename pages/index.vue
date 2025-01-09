@@ -7,6 +7,16 @@ definePageMeta({
 })
 
 const dialog = ref(false)
+const name = ref('')
+const subtitle = ref('')
+const right = ref(false)
+const media = ref({
+  id: 0,
+  title: '',
+  subtitle: '',
+  path: '',
+  file: null as File | null
+})
 
 const mh = mediaHandler();
 
@@ -15,18 +25,53 @@ const mediaStore = useMediaStore();
 
 let publicNuxtPath = '/test.jpg';
 
+const uploaderRef = ref(null)
+
+async function onFilesSelected(files: File[]) {
+  if (!files.length) return;
+  
+  const firstFile = files[0];
+  media.value = {
+    ...media.value,
+    file: firstFile,
+    title: name.value,
+    subtitle: subtitle.value
+  };
+}
+
 async function addMedia() {
   try {
-    const nextKey = await mh.getNextKey();
-    let media = await mh.create({
-      id: nextKey,
-      title: 'test-name',
-      alt: 'test-file',
-      path: publicNuxtPath
+    if (!uploaderRef.value?.files?.length) {
+      console.error('No file selected');
+      return;
+    }
+
+    const files = uploaderRef.value.files;
+    await onFilesSelected(files);
+
+    let uploadResponse = await mh.create(media.value);
+    mediaStore.addMedia({
+      id: uploadResponse.id,
+      title: uploadResponse.title,
+      subtitle: uploadResponse.subtitle,
+      path: uploadResponse.path,
     });
-
-    mediaStore.addMedia(media);
-
+    
+    dialog.value = false;
+    
+    name.value = '';
+    subtitle.value = '';
+    media.value = {
+      id: 0,
+      title: '',
+      subtitle: '',
+      path: '',
+      file: null
+    };
+    
+    if (uploaderRef.value) {
+      uploaderRef.value.reset();
+    }
   } catch (error) {
     console.error('Error adding media:', error);
   }
@@ -69,12 +114,16 @@ function openDialog() {
           <q-checkbox v-model="right" label="add geo location" class="pb-10" />
 
           <q-uploader
+              ref="uploaderRef"
               class="mx-2"
-              url="localStorage solution here"
-              label="Restricted to images"
+              label="Upload Images"
               multiple
               accept=".jpg, image/*"
               @rejected="onRejected"
+              style="max-width: 100%"
+              :auto-upload="false"
+              hide-upload-btn
+              @added="onFilesSelected"
           />
         </q-card-section>
 

@@ -1,78 +1,132 @@
-import { createStorage } from "unstorage";
-import indexedDbDriver from "unstorage/drivers/indexedb";
-
+// create media type
 export type Media = {
     id: number;
     title: string;
-    alt: string;
+    subtitle: string;
     path: string;
-};
+    file?: File | null;
+}
+
 
 export const mediaHandler = () => {
-    const storage = createStorage({
-        driver: indexedDbDriver({ base: "media:" }),
-    });
+    const config = useRuntimeConfig()
+    const baseURL = config.public.apiBase
 
-    const getCurrentCounter = async (): Promise<number> => {
-        const counter = await storage.getItem('global:counter');
-        return counter ? Number(counter) : 0;
-    };
-
-    const incrementCounter = async (): Promise<number> => {
-        const current = await getCurrentCounter();
-        const next = current + 1;
-        await storage.setItem('global:counter', next);
-        return next;
+    const defaultHeaders = {
+        'Content-Type': 'application/json',
     };
 
     const create = async (data: Media) => {
-        console.log('mediaHandler create')
-        const key = await incrementCounter();
-        await storage.setItem(key.toString(), data);
-        return data;
+        try {
+            const formData = new FormData();
+            formData.append('title', data.title);
+            formData.append('subtitle', data.subtitle);
+            if (data.file) {
+                formData.append('file', data.file);
+            }
+
+            const response = await fetch(`${baseURL}/api/v1/media/sigo-upload`, {
+                method: 'POST',
+                body: formData,
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to create media');
+            }
+            
+            return await response.json();
+        } catch (error) {
+            console.error('Error creating media:', error);
+            throw error;
+        }
     };
 
     const deleteItem = async (key: string) => {
-        console.log('delete', key);
-        await storage.remove(key.toString());
+        try {
+            let formData = new FormData();
+            formData.append('id', key);
+            const response = await fetch(`${baseURL}/api/v1/media/sigo-delete`, {
+                method: 'POST',
+                body: formData,
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to delete media');
+            }
+        } catch (error) {
+            console.error('Error deleting media:', error);
+            throw error;
+        }
     }
 
     const getMedia = async (key: string): Promise<Media | null> => {
-        const fullKey = key.startsWith('media:') ? key : `media:${key}`;
-        let items = await storage.getItem(fullKey);
+        try {
+            const response = await fetch(`${baseURL}/api/v1/media/sigo/${key}`, {
+                headers: defaultHeaders,
+                credentials: 'include',
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch media');
+            }
 
-        console.log("items", items);
-        return items;
+            let output = await response.json()
+            console.log(output)
+            
+            return output;
+        } catch (error) {
+            console.error('Error fetching media:', error);
+            return null;
+        }
     };
 
     const getAllMedias = async (): Promise<Media[]> => {
-        const keys = await storage.getKeys();
-        console.log(keys);
-        const medias: Media[] = [];
-        for (let key of keys) {
-            console.log(key);
-            if (key === 'media:global:counter') continue;
+        try {
+            const response = await fetch(`${baseURL}/api/v1/media/sigo`);
             
-            key = key.replace('media:', '');
-            const media = await storage.getItem<Media>(key);
-            console.log(media, key);
-            if (media) {
-                medias.push(media);
+            if (!response.ok) {
+                throw new Error('Failed to fetch all media');
             }
-        }
 
-        console.log(medias);
-        return medias;
+            let output = await response.json()
+            console.log(output)
+            
+            return output;
+        } catch (error) {
+            console.error('Error fetching all media:', error);
+            return [];
+        }
     };
 
     const getMediaCount = async (): Promise<number> => {
-        const keys = await storage.getKeys();
-        return keys.filter(key => key !== 'global:counter').length;
+        const medias = await getAllMedias();
+        return medias.length;
     };
 
     const getNextKey = async (): Promise<number> => {
-        const next = await getCurrentCounter() + 1;
-        return next;
+        const medias = await getAllMedias();
+        const maxId = Math.max(...medias.map(media => media.id), 0);
+        return maxId + 1;
+    };
+
+    const updateInfo = async (id: string | number, data: { title?: string, subtitle?: string }) => {
+        try {
+            const response = await fetch(`${baseURL}/api/v1/media/sigo-update-info/${id}`, {
+                method: 'POST',
+                headers: defaultHeaders,
+                body: JSON.stringify(data),
+                credentials: 'include',
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to update media info');
+            }
+            
+            return await response.json();
+        } catch (error) {
+            console.error('Error updating media info:', error);
+            throw error;
+        }
     };
 
     return {
@@ -82,5 +136,6 @@ export const mediaHandler = () => {
         getAllMedias,
         getMediaCount,
         getNextKey,
+        updateInfo,
     };
 };
