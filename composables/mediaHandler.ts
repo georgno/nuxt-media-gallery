@@ -109,13 +109,12 @@ export const mediaHandler = () => {
         return maxId + 1;
     };
 
-    const updateInfo = async (id: string | number, data: { title?: string, subtitle?: string }) => {
+    const updateInfo = async (id: string | number, data: { id: number, title?: string, subtitle?: string }) => {
         try {
-            const response = await fetch(`${baseURL}/api/v1/media/sigo-update-info/${id}`, {
+            const response = await fetch(`${baseURL}/api/v1/media/sigo-update-info`, {
                 method: 'POST',
                 headers: defaultHeaders,
                 body: JSON.stringify(data),
-                credentials: 'include',
             });
             
             if (!response.ok) {

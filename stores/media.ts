@@ -34,6 +34,11 @@ export const useMediaStore = defineStore('media', {
       console.log('all items', this.items)
       console.log('getMedia', id)
       return this.items.find(item => item.id === id)
+    },
+    updateMedia(media: Media) {
+      this.items = this.items.map(m => 
+        m.id === media.id ? media : m
+      );
     }
   }
 })

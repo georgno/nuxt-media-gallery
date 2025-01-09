@@ -41,7 +41,7 @@ onMounted(async () => {
         <div class="ps-6">
           <h1 class="text-3xl">{{ media?.title || 'Loading...' }}</h1>
           <p>Media ID: {{ route.params.id }}</p>
-          <h2 class="text-sm text-gray-500">{{ media?.alt || 'Loading...' }}</h2>
+          <h2 class="text-sm text-gray-500">{{ media?.subtitle || 'Loading...' }}</h2>
         </div>
       </div>
     </div>
