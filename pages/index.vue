@@ -111,13 +111,10 @@ function openDialog() {
               class="pb-10"
           />
 
-          <q-checkbox v-model="right" label="add geo location" class="pb-10" />
-
           <q-uploader
               ref="uploaderRef"
               class="mx-2"
-              label="Upload Images"
-              multiple
+              label="Upload Image"
               accept=".jpg, image/*"
               @rejected="onRejected"
               style="max-width: 100%"
