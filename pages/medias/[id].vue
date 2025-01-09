@@ -7,7 +7,7 @@ console.log(route.params.id)
 
 // get the media from the store
 const mediaStore = useMediaStore();
-const media = ref<{ id: number; title: string; alt: string; path: string; } | null | undefined>(null)
+const media = ref<{ id: number; title: string; alt: string; path: string; longitude: number; latitude: number; } | null | undefined>(null);
 
 onMounted(async () => {
   const id = route.params.id as string;
@@ -42,6 +42,8 @@ onMounted(async () => {
           <h1 class="text-3xl">{{ media?.title || 'Loading...' }}</h1>
           <p>Media ID: {{ route.params.id }}</p>
           <h2 class="text-sm text-gray-500">{{ media?.subtitle || 'Loading...' }}</h2>
+          <small>longitude: {{ media?.longitude }}</small><br>
+          <small>latitude: {{ media?.latitude }}</small>
         </div>
       </div>
     </div>

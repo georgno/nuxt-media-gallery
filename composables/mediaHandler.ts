@@ -1,10 +1,11 @@
-// create media type
 export type Media = {
     id: number;
     title: string;
     subtitle: string;
     path: string;
     file?: File | null;
+    longitude: number;
+    latitude: number;
 }
 
 
