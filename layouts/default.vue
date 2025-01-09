@@ -1,11 +1,11 @@
 <template>
   <div>
-    <q-layout view="hHh Lpr lff" class="shadow-2 rounded-borders">
-      <q-header elevated :class="$q.dark.isActive ? 'bg-secondary' : 'bg-black'">
+    <q-layout view="hHh Lpr lff" class="shadow-2 rounded-borders" :class="$q.dark.isActive ? 'bg-black' : 'bg-white'">
+      <q-header elevated :class="$q.dark.isActive ? 'bg-black' : 'bg-secondary'">
         <q-toolbar>
           <q-btn flat @click="drawer = !drawer" round dense icon="menu" />
           <q-toolbar-title></q-toolbar-title>
-          <q-btn flat round :icon="isDark ? 'dark_mode' : 'light_mode'" @click="toggleDarkMode" />
+          <q-btn flat round :icon="isDark ? 'light_mode' : 'dark_mode'" @click="toggleDarkMode" />
         </q-toolbar>
       </q-header>
       <q-drawer
@@ -14,7 +14,7 @@
           :breakpoint="500"
           overlay
           bordered
-          :class="$q.dark.isActive ? 'bg-gray-50' : 'bg-black'"
+          :class="$q.dark.isActive ? 'bg-black' : 'bg-gray-50'"
       >
         <q-scroll-area class="fit">
           <q-list>
@@ -26,10 +26,10 @@
                 :active="$route.path === menuItem.to" 
                 v-ripple
               >
-                <q-item-section avatar :class="$q.dark.isActive ? 'text-black' : 'text-white'">
+                <q-item-section avatar :class="$q.dark.isActive ? 'text-white' : 'text-black'">
                   <q-icon :name="menuItem.icon" />
                 </q-item-section>
-                <q-item-section :class="$q.dark.isActive ? 'text-black' : 'text-white'">
+                <q-item-section :class="$q.dark.isActive ? 'text-white' : 'text-black'">
                   {{ menuItem.label }}
                 </q-item-section>
               </q-item>
@@ -50,6 +50,7 @@
 </template>
 
 <style scoped>
+
 </style>
 
 <script setup lang="ts">
