@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useMediaStore } from '~/stores/media';
-import { Media } from '~/composables/mediaHandler';
+import type { Media } from '~/composables/mediaHandler';
 
 defineProps({
   media: {
@@ -19,10 +19,12 @@ const mh = mediaHandler();
 const mediaStore = useMediaStore();
 const router = useRouter();
 
-// New refs for edit dialog
 const editDialog = ref(false);
 const editTitle = ref('');
 const editSubtitle = ref('');
+
+const deleteDialog = ref(false);
+const mediaToDelete = ref<Media | null>(null);
 
 const handleEditClick = (media: Media) => {
   editTitle.value = media.title;
@@ -38,14 +40,12 @@ const handleUpdateMedia = async (media: Media) => {
       id: media.id
     });
 
-    // Update store with new values
     mediaStore.updateMedia({
       ...media,
       title: editTitle.value,
       subtitle: editSubtitle.value,
     });
 
-    // Close dialog
     editDialog.value = false;
   } catch (error) {
     console.error('Error updating media:', error);
@@ -53,9 +53,20 @@ const handleUpdateMedia = async (media: Media) => {
 };
 
 const handleDeleteClick = (media: Media) => {
-  console.log(media);
-  mh.deleteItem(media.id);
-  mediaStore.deleteMedia(media.id);
+  mediaToDelete.value = media;
+  deleteDialog.value = true;
+};
+
+const handleConfirmDelete = async () => {
+  if (!mediaToDelete.value) return;
+  
+  try {
+    await mh.deleteItem(String(mediaToDelete.value.id));
+    mediaStore.deleteMedia(mediaToDelete.value.id);
+    deleteDialog.value = false;
+  } catch (error) {
+    console.error('Error deleting media:', error);
+  }
 };
 
 const cardAction = (media: Media) => {
@@ -66,7 +77,7 @@ const cardAction = (media: Media) => {
 </script>
 
 <template>
-  <q-card class="my-card" @click="cardAction(media)" :class="$q.dark.isActive ? 'bg-white' : 'bg-grey-9'">
+  <q-card class="my-card" @click="cardAction(media)" :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-white'">
     <q-img :src="media.path" style="height: 250px;" position="top">
       <div class="absolute-bottom">
         <div class="text-h6">{{ media.title }}</div>
@@ -75,12 +86,12 @@ const cardAction = (media: Media) => {
     </q-img>
 
     <q-card-actions align="right">
-      <q-btn flat icon="edit" @click.stop="handleEditClick(media)" :class="$q.dark.isActive ? 'text-black' : 'text-white'" />
+      <q-btn flat icon="edit" @click.stop="handleEditClick(media)" 
+        :class="$q.dark.isActive ? 'text-white' : 'text-black'" />
       <q-btn flat icon="delete" @click.stop="handleDeleteClick(media)"
-        :class="$q.dark.isActive ? 'text-black' : 'text-white'" />
+        :class="$q.dark.isActive ? 'text-white' : 'text-black'" />
     </q-card-actions>
 
-    <!-- New Edit Dialog -->
     <q-dialog v-model="editDialog" :backdrop-filter="'sepia(80%) blur(3px)'" style="color: black">
       <q-card>
         <q-card-section class="row items-center q-pb-none text-h6">
@@ -97,6 +108,23 @@ const cardAction = (media: Media) => {
         <q-card-actions align="right">
           <q-btn flat label="Update" color="primary" @click="handleUpdateMedia(media)" style="font-weight: bold" />
           <q-btn flat label="Close" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="deleteDialog" :backdrop-filter="'sepia(80%) blur(3px)'" style="color: black">
+      <q-card>
+        <q-card-section class="row items-center q-pb-none">
+          <div class="text-h6">Confirm Delete</div>
+        </q-card-section>
+
+        <q-card-section>
+          Are you sure you want to delete "{{ mediaToDelete?.title }}"?
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" color="primary" v-close-popup />
+          <q-btn flat label="Delete" color="negative" @click="handleConfirmDelete" />
         </q-card-actions>
       </q-card>
     </q-dialog>
