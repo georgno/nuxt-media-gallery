@@ -6,6 +6,7 @@ export type Media = {
     file?: File | null;
     longitude: number;
     latitude: number;
+    created_at: string;
 }
 
 

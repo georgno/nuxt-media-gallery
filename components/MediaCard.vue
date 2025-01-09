@@ -26,10 +26,13 @@ const editSubtitle = ref('');
 const deleteDialog = ref(false);
 const mediaToDelete = ref<Media | null>(null);
 
+const menuRef = ref(null);
+
 const handleEditClick = (media: Media) => {
   editTitle.value = media.title;
   editSubtitle.value = media.subtitle;
   editDialog.value = true;
+  menuRef.value?.hide();
 };
 
 const handleUpdateMedia = async (media: Media) => {
@@ -55,6 +58,7 @@ const handleUpdateMedia = async (media: Media) => {
 const handleDeleteClick = (media: Media) => {
   mediaToDelete.value = media;
   deleteDialog.value = true;
+  menuRef.value?.hide();
 };
 
 const handleConfirmDelete = async () => {
@@ -78,21 +82,36 @@ const cardAction = (media: Media) => {
 
 <template>
   <q-card class="my-card" @click="cardAction(media)" :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-white'">
-    <q-img :src="media.path" style="height: 250px;" position="top">
-      <div class="absolute-bottom">
-        <div class="text-h6">{{ media.title }}</div>
-        <div class="text-subtitle2">{{ media.subtitle }}</div>
+    <q-card-section horizontal>
+      <div class="col-auto content-center">
+        <q-img :src="media.path" style="width: 100px; height: 100px;" position="top"></q-img>
       </div>
-    </q-img>
+      <div class="ps-3 pt-2 pb-3 col">
+        <div class="text-h5 text-bold">{{ media.title }}</div>
+        <div class="text-subtitle1">{{ media.subtitle }}</div>
+        <div class="">{{ media.created_at }}</div>
+      </div>
+      <q-card-actions align="right" vertical class="align-middle justify-center">
+<!--        <q-btn flat icon="edit" @click.stop="handleEditClick(media)"-->
+<!--          :class="$q.dark.isActive ? 'text-white' : 'text-black'" />-->
+<!--        <q-btn flat icon="delete" @click.stop="handleDeleteClick(media)"-->
+<!--          :class="$q.dark.isActive ? 'text-white' : 'text-black'" />-->
+        <q-btn icon="more_vert" @click.stop>
+          <q-menu ref="menuRef" auto-close>
+            <q-list style="min-width: 100px">
+              <q-item clickable>
+                <q-item-section @click.stop="handleEditClick(media)">Edit</q-item-section>
+              </q-item>
+              <q-item clickable>
+                <q-item-section @click.stop="handleDeleteClick(media)">Delete</q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </q-btn>
+      </q-card-actions>
+    </q-card-section>
 
-    <q-card-actions align="right">
-      <q-btn flat icon="edit" @click.stop="handleEditClick(media)" 
-        :class="$q.dark.isActive ? 'text-white' : 'text-black'" />
-      <q-btn flat icon="delete" @click.stop="handleDeleteClick(media)"
-        :class="$q.dark.isActive ? 'text-white' : 'text-black'" />
-    </q-card-actions>
-
-    <q-dialog v-model="editDialog" :backdrop-filter="'sepia(80%) blur(3px)'" style="color: black">
+    <q-dialog v-model="editDialog" :backdrop-filter="'sepia(80%) blur(3px)'" style="color: black" :width="200">
       <q-card>
         <q-card-section class="row items-center q-pb-none text-h6">
           Edit Media
