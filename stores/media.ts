@@ -3,10 +3,18 @@ import type {Media} from '~/composables/mediaHandler'
 
 export const useMediaStore = defineStore('media', {
   state: () => ({
-    items: [] as Media[],
-    loading: false
+    medias: [] as Media[],
+    currentMedia: null as Media | null,
   }),
+  
+  getters: {
+    getCurrentMedia: (state) => state.currentMedia,
+  },
+  
   actions: {
+    setCurrentMedia(media: Media | null) {
+      this.currentMedia = media
+    },
     async initializeMedia() {
       if (this.loading || Object.keys(this.items).length > 0) return
       

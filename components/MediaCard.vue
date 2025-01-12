@@ -2,7 +2,7 @@
 import { useMediaStore } from '~/stores/media';
 import type { Media } from '~/composables/mediaHandler';
 
-defineProps({
+const props = defineProps({
   media: {
     type: Object as () => Media,
     required: true,
@@ -26,28 +26,49 @@ const editSubtitle = ref('');
 const deleteDialog = ref(false);
 const mediaToDelete = ref<Media | null>(null);
 
-const menuRef = ref(null);
+const items = [
+  [{
+    label: 'Edit',
+    icon: 'i-heroicons-pencil-square-20-solid',
+    shortcuts: ['E'],
+    click: () => handleEditClick(props.media)
+  }, {
+    label: 'Delete',
+    icon: 'i-heroicons-trash-20-solid',
+    shortcuts: ['⌘', 'D'],
+    click: () => handleDeleteClick(props.media)
+  }
+]]
 
 const handleEditClick = (media: Media) => {
   editTitle.value = media.title;
   editSubtitle.value = media.subtitle;
   editDialog.value = true;
-  menuRef.value?.hide();
 };
 
 const handleUpdateMedia = async (media: Media) => {
+  console.log(media);
+
+  console.log('updating media with id', media.id);
+
   try {
-    await mh.updateInfo(media.id, {
+    let apiResponse = await mh.updateInfo(media.id, {
       title: editTitle.value,
       subtitle: editSubtitle.value,
       id: media.id
     });
 
-    mediaStore.updateMedia({
+    console.log(apiResponse);
+
+    let data = {
       ...media,
       title: editTitle.value,
       subtitle: editSubtitle.value,
-    });
+    };
+
+    console.log(data);
+
+    mediaStore.updateMedia(data);
 
     editDialog.value = false;
   } catch (error) {
@@ -81,71 +102,110 @@ const cardAction = (media: Media) => {
 </script>
 
 <template>
-  <q-card class="my-card" @click="cardAction(media)" :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-white'">
-    <q-card-section horizontal>
-      <div class="col-auto content-center">
-        <q-img :src="media.path" style="width: 100px; height: 100px;" position="top"></q-img>
+  <UCard 
+    class="my-card" 
+    @click="cardAction(media)"
+    :ui="{ base: 'overflow-hidden', background: $colorMode.value === 'dark' ? 'bg-gray-900' : 'bg-white' }"
+  >
+    <div class="flex">
+        <div class="content-center aspect-square w-20">
+          <NuxtImg
+              :src="media.path"
+              :alt="media.title"
+              width="100"
+              height="100"
+              fit="cover" />
+        </div>
+
+      <!-- Content section -->
+      <div class="flex-grow p-4">
+        <h5 class="text-xl font-bold">{{ media.title }}</h5>
+        <p class="text-lg">{{ media.subtitle }}</p>
+        <p>{{ media.created_at }}</p>
       </div>
-      <div class="ps-3 pt-2 pb-3 col">
-        <div class="text-h5 text-bold">{{ media.title }}</div>
-        <div class="text-subtitle1">{{ media.subtitle }}</div>
-        <div class="">{{ media.created_at }}</div>
+
+      <!-- Actions section -->
+      <div class="flex items-center justify-center px-2">
+        <UDropdown
+            :items="items" :popper="{ placement: 'bottom-start' }"
+            @click.stop
+        >
+          <UButton icon="i-lucide-menu" color="neutral" variant="ghost" />
+        </UDropdown>
       </div>
-      <q-card-actions align="right" vertical class="align-middle justify-center">
-<!--        <q-btn flat icon="edit" @click.stop="handleEditClick(media)"-->
-<!--          :class="$q.dark.isActive ? 'text-white' : 'text-black'" />-->
-<!--        <q-btn flat icon="delete" @click.stop="handleDeleteClick(media)"-->
-<!--          :class="$q.dark.isActive ? 'text-white' : 'text-black'" />-->
-        <q-btn icon="more_vert" @click.stop>
-          <q-menu ref="menuRef" auto-close>
-            <q-list style="min-width: 100px">
-              <q-item clickable>
-                <q-item-section @click.stop="handleEditClick(media)">Edit</q-item-section>
-              </q-item>
-              <q-item clickable>
-                <q-item-section @click.stop="handleDeleteClick(media)">Delete</q-item-section>
-              </q-item>
-            </q-list>
-          </q-menu>
-        </q-btn>
-      </q-card-actions>
-    </q-card-section>
+    </div>
 
-    <q-dialog v-model="editDialog" :backdrop-filter="'sepia(80%) blur(3px)'" style="color: black" :width="200">
-      <q-card>
-        <q-card-section class="row items-center q-pb-none text-h6">
-          Edit Media
-        </q-card-section>
+    <!-- Edit Dialog -->
+    <UModal v-model="editDialog">
+      <UCard>
+        <template #header>
+          <h3 class="text-xl font-bold">Edit Media</h3>
+        </template>
 
-        <q-card-section>
-          <q-input filled v-model="editTitle" label="Title *" hint="Type something" lazy-rules
-            :rules="[val => val && val.length > 0 || 'Please type something']" class="pb-10" />
+        <div class="space-y-4">
+          <UFormGroup label="Title" required>
+            <UInput
+              v-model="editTitle"
+              placeholder="Enter title"
+              :rules="[{ required: true, message: 'Title is required' }]"
+            />
+          </UFormGroup>
 
-          <q-input filled v-model="editSubtitle" label="Subtitle" hint="Type something" class="pb-10" />
-        </q-card-section>
+          <UFormGroup label="Subtitle">
+            <UInput
+              v-model="editSubtitle"
+              placeholder="Enter subtitle"
+            />
+          </UFormGroup>
+        </div>
 
-        <q-card-actions align="right">
-          <q-btn flat label="Update" color="primary" @click="handleUpdateMedia(media)" style="font-weight: bold" />
-          <q-btn flat label="Close" color="primary" v-close-popup />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+        <template #footer>
+          <div class="flex justify-end gap-2">
+            <UButton 
+              icon="i-heroicons-trash" 
+              color="red" 
+              variant="ghost" 
+              @click="handleDeleteClick(media)"
+            />
+            <UButton 
+              label="Update" 
+              color="primary" 
+              @click="handleUpdateMedia(media)"
+            />
+            <UButton 
+              label="Close" 
+              variant="ghost" 
+              @click="editDialog = false"
+            />
+          </div>
+        </template>
+      </UCard>
+    </UModal>
 
-    <q-dialog v-model="deleteDialog" :backdrop-filter="'sepia(80%) blur(3px)'" style="color: black">
-      <q-card>
-        <q-card-section class="row items-center q-pb-none">
-          <div class="text-h6">Confirm Delete</div>
-        </q-card-section>
+    <!-- Delete Dialog -->
+    <UModal v-model="deleteDialog">
+      <UCard>
+        <template #header>
+          <h3 class="text-xl font-bold">Confirm Delete</h3>
+        </template>
 
-        <q-card-section>
-          Are you sure you want to delete "{{ mediaToDelete?.title }}"?
-        </q-card-section>
+        <p>Are you sure you want to delete "{{ mediaToDelete?.title }}"?</p>
 
-        <q-card-actions align="right">
-          <q-btn flat label="Cancel" color="primary" v-close-popup />
-          <q-btn flat label="Delete" color="negative" @click="handleConfirmDelete" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-  </q-card>
+        <template #footer>
+          <div class="flex justify-end gap-2">
+            <UButton 
+              label="Cancel" 
+              variant="ghost" 
+              @click="deleteDialog = false"
+            />
+            <UButton 
+              label="Delete" 
+              color="red" 
+              @click="handleConfirmDelete"
+            />
+          </div>
+        </template>
+      </UCard>
+    </UModal>
+  </UCard>
 </template>

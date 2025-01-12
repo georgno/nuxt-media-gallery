@@ -15,12 +15,9 @@
     "@nuxt/ui": "^2.19.2",
     "@nuxtjs/leaflet": "^1.2.6",
     "@pinia/nuxt": "^0.5.5",
-    "@quasar/extras": "^1.16.15",
     "idb-keyval": "^6.2.1",
     "leaflet.markercluster": "^1.5.3",
     "nuxt": "^3.14.159",
-    "nuxt-quasar-ui": "^2.1.9",
-    "quasar": "^2.17.6",
     "unstorage": "^1.14.0",
     "vue": "latest",
     "vue-router": "latest"

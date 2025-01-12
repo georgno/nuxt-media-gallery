@@ -16,10 +16,12 @@ defineProps({
 
 <template>
   <div class="bg-amber-50 rounded-lg w-full">
-    <q-img
-        :src="media.path"
-        spinner-color="white"
-        fit="cover"
+    <NuxtImg
+      :src="media.path"
+      loading="lazy"
+      format="webp"
+      class="w-full h-full object-cover"
+      placeholder
     />
   </div>
 </template>

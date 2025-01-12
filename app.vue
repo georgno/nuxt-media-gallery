@@ -1,10 +1,8 @@
 <template>
   <NuxtLayout>
-    <NuxtPage :keepalive="true" />
-    <NuxtRouteAnnouncer />
+    <NuxtPage />
   </NuxtLayout>
 </template>
-
 
 <script setup lang="ts">
 </script>

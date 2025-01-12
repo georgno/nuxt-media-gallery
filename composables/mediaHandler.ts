@@ -112,11 +112,18 @@ export const mediaHandler = () => {
     };
 
     const updateInfo = async (id: string | number, data: { id: number, title?: string, subtitle?: string }) => {
+        
+        console.log(JSON.stringify(data));
+
+        const formData = new FormData();
+        formData.append('id', id.toString());
+        formData.append('title', data.title || '');
+        formData.append('subtitle', data.subtitle || '');
+
         try {
-            const response = await fetch(`${baseURL}/api/v1/media/sigo-update-info`, {
+            const response = await fetch(`${baseURL}/api/v1/media/sigo-update-info?XDEBUG_SESSION_START=19740`, {
                 method: 'POST',
-                headers: defaultHeaders,
-                body: JSON.stringify(data),
+                body: formData,
             });
             
             if (!response.ok) {

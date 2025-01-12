@@ -6,7 +6,7 @@ definePageMeta({
   keepalive: true,
 })
 
-const dialog = ref(false)
+const isOpen = ref(false)
 const name = ref('')
 const subtitle = ref('')
 const right = ref(false)
@@ -19,24 +19,37 @@ const media = ref({
 })
 
 const mh = mediaHandler();
-
 const mediaStore = useMediaStore();
 
+const uploaderRef = ref<HTMLInputElement | null>(null)
+const previewUrl = ref('')
 
-let publicNuxtPath = '/test.jpg';
-
-const uploaderRef = ref(null)
-
-async function onFilesSelected(files: File[]) {
-  if (!files.length) return;
+function onFilesSelected(event: InputEvent | Event) {
+  console.log('onFilesSelected')
+  const target = event?.target as HTMLInputElement | null;
   
-  const firstFile = files[0];
-  media.value = {
-    ...media.value,
-    file: firstFile,
-    title: name.value,
-    subtitle: subtitle.value
-  };
+  // Try to get files from UInput's native event
+  let files = target?.files;
+  
+  // If no files found, try to get them from the input ref directly
+  if (!files && uploaderRef.value) {
+    files = uploaderRef.value.files;
+  }
+
+  if (!files || files.length === 0) {
+    console.log('No files found');
+    return;
+  }
+
+  const file = files[0];
+  console.log('File selected:', file);
+  media.value.file = file;
+  media.value.title = name.value;
+  media.value.subtitle = subtitle.value;
+  
+  // Create and set preview URL
+  previewUrl.value = URL.createObjectURL(file);
+  console.log('Preview URL:', previewUrl.value);
 }
 
 async function addMedia() {
@@ -46,18 +59,18 @@ async function addMedia() {
       return;
     }
 
-    const files = uploaderRef.value.files;
-    await onFilesSelected(files);
-
     let uploadResponse = await mh.create(media.value);
     mediaStore.addMedia({
       id: uploadResponse.id,
       title: uploadResponse.title,
       subtitle: uploadResponse.subtitle,
       path: uploadResponse.path,
+      longitude: 0,
+      latitude: 0,
+      created_at: new Date().toISOString()
     });
     
-    dialog.value = false;
+    isOpen.value = false;
     
     name.value = '';
     subtitle.value = '';
@@ -70,7 +83,7 @@ async function addMedia() {
     };
     
     if (uploaderRef.value) {
-      uploaderRef.value.reset();
+      uploaderRef.value.value = '';
     }
   } catch (error) {
     console.error('Error adding media:', error);
@@ -78,62 +91,101 @@ async function addMedia() {
 }
 
 function openDialog() {
-  dialog.value = true
+  isOpen.value = true
 }
 
+function closeDialog() {
+  isOpen.value = false
+  if (previewUrl.value) {
+    URL.revokeObjectURL(previewUrl.value)
+    previewUrl.value = ''
+  }
+}
 </script>
 
 <template>
   <div>
-    <q-dialog v-model="dialog" :backdrop-filter="'sepia(80%) blur(3px)'" style="color: black">
-      <q-card>
-        <q-card-section class="row items-center q-pb-none text-h6">
-          Add Media
-        </q-card-section>
+    <UModal v-model="isOpen">
+      <div class="p-4 space-y-4">
+        <UCard>
+          <template #header>
+            <h3 class="text-xl font-medium">Add Media</h3>
+          </template>
 
-        <q-card-section>
+          <UFormGroup label="Title" required>
+            <UInput
+                v-model="name"
+                placeholder="Type something"
+                :ui="{ wrapper: 'mb-4' }"
+                required
+            />
+          </UFormGroup>
 
-          <q-input
-              filled
-              v-model="name"
-              label="Title *"
-              hint="Type something"
-              lazy-rules
-              :rules="[ val => val && val.length > 0 || 'Please type something']"
-              class="pb-10"
+          <UFormGroup label="Subtitle">
+            <UInput
+                v-model="subtitle"
+                placeholder="Type something"
+                :ui="{ wrapper: 'mb-4' }"
+            />
+          </UFormGroup>
+
+          <UCheckbox
+              v-model="right"
+              label="Add geo location"
+              :ui="{ wrapper: 'mb-4' }"
           />
 
-          <q-input
-              filled
-              v-model="subtitle"
-              label="Subtitle"
-              hint="Type something"
-              class="pb-10"
-          />
-
-          <q-uploader
+          <UFormGroup label="Upload Images">
+            <input
               ref="uploaderRef"
-              class="mx-2"
-              label="Upload Image"
+              type="file"
               accept=".jpg, image/*"
-              @rejected="onRejected"
-              style="max-width: 100%"
-              :auto-upload="false"
-              hide-upload-btn
-              @added="onFilesSelected"
-          />
-        </q-card-section>
+              class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100"
+              @change="onFilesSelected"
+            />
+          </UFormGroup>
 
-        <q-card-actions align="right">
-          <q-btn flat label="Upload" color="primary" @click="addMedia" style="font-weight: bold" />
-          <q-btn flat label="Close" color="primary" v-close-popup />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+          <img 
+            :src="previewUrl" 
+            v-if="previewUrl" 
+            class="mt-4 max-w-full h-auto max-h-[100px] rounded-lg"
+          >
+          <p v-else class="mt-4 text-gray-500">No image...</p>
+
+          <template #footer>
+            <div class="flex justify-end gap-3">
+              <UButton
+                  color="gray"
+                  variant="solid"
+                  @click="closeDialog"
+              >
+                Close
+              </UButton>
+              <UButton
+                  color="primary"
+                  variant="solid"
+                  @click="addMedia"
+              >
+                Upload
+              </UButton>
+            </div>
+          </template>
+        </UCard>
+      </div>
+    </UModal>
+
     <MediaList />
-    <q-page-sticky position="bottom-right" :offset="[18, 18]">
-      <q-btn fab icon="add" color="primary" class="bg-primary text-white" @click="openDialog" />
-    </q-page-sticky>
+    
+    <div class="fixed bottom-4 right-4">
+      <UButton
+        icon="i-heroicons-plus"
+        color="primary"
+        variant="solid"
+        size="xl"
+        class="rounded-full"
+        @click="openDialog"
+      />
+    </div>
   </div>
 </template>
 

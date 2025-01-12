@@ -1,89 +1,53 @@
 <template>
   <div>
-    <q-layout view="hHh Lpr lff" class="shadow-2 rounded-borders" :class="$q.dark.isActive ? 'bg-black' : 'bg-white'">
-      <q-header elevated :class="$q.dark.isActive ? 'bg-black' : 'bg-secondary'">
-        <q-toolbar>
-          <q-btn flat @click="drawer = !drawer" round dense icon="menu" />
-          <q-toolbar-title></q-toolbar-title>
-          <q-btn flat round :icon="isDark ? 'light_mode' : 'dark_mode'" @click="toggleDarkMode" />
-        </q-toolbar>
-      </q-header>
-      <q-drawer
-          v-model="drawer"
-          :width="200"
-          :breakpoint="500"
-          overlay
-          bordered
-          :class="$q.dark.isActive ? 'bg-black' : 'bg-gray-50'"
-      >
-        <q-scroll-area class="fit">
-          <q-list>
-
-            <template v-for="(menuItem, index) in menuList" :key="index">
-              <q-item 
-                clickable 
-                :to="menuItem.to"
-                :active="$route.path === menuItem.to" 
-                v-ripple
-              >
-                <q-item-section avatar :class="$q.dark.isActive ? 'text-white' : 'text-black'">
-                  <q-icon :name="menuItem.icon" />
-                </q-item-section>
-                <q-item-section :class="$q.dark.isActive ? 'text-white' : 'text-black'">
-                  {{ menuItem.label }}
-                </q-item-section>
-              </q-item>
-              <q-separator :key="'sep' + index" v-if="menuItem.separator" />
-            </template>
-
-          </q-list>
-        </q-scroll-area>
-      </q-drawer>
-
-    <q-page-container>
-      <q-page padding class="px-5 py-4">
+    <div class="min-h-screen">
+      <Header/>
+      <main class="p-4">
         <slot />
-      </q-page>
-    </q-page-container>
-    </q-layout>
+      </main>
+
+      <footer>
+        <div class="p-4">
+        </div>
+      </footer>
+      <USlideover v-model="slideoverStore.isOpen" side="left" :width="140">
+        <div class="p-4">
+          <h1 class="pb-3 text-xl">Media Gallery</h1>
+          <UVerticalNavigation :links="menuList" />
+        </div>
+      </USlideover>
+    </div>
   </div>
 </template>
 
-<style scoped>
-
-</style>
-
 <script setup lang="ts">
-import { ref } from 'vue'
 import { useDarkMode } from '~/composables/darkMode'
+import { useSlideoverStore } from '~/stores/slideover'
 
-const $q = useQuasar()
-const drawer = ref(false)
-const { isDark, toggleDarkMode } = useDarkMode()
+const { isDark } = useDarkMode()
 
-watch(() => $q.dark.isActive, val => {
-  console.log(val ? 'On dark mode' : 'On light mode')
+const slideoverStore = useSlideoverStore()
+
+defineShortcuts({
+  o: () => slideoverStore.toggle()
 })
+
+const mediaStore = useMediaStore()
 
 const menuList = [
   {
-    icon: 'home',
     label: 'Home',
-    separator: true,
+    icon: 'i-heroicons-home',
     to: '/'
   },
   {
-    icon: 'map',
-    label: 'Map',
-    separator: true,
-    to: 'medias/map'
+    label: 'Settings',
+    icon: 'i-heroicons-cog',
+    to: '/settings'
   }
 ]
-
-const mediaStore = useMediaStore()
 
 onMounted(async () => {
   await mediaStore.initializeMedia()
 })
-
 </script>
