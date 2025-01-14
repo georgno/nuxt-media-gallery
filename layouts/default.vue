@@ -21,10 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { useDarkMode } from '~/composables/darkMode'
 import { useSlideoverStore } from '~/stores/slideover'
-
-const { isDark } = useDarkMode()
 
 const slideoverStore = useSlideoverStore()
 

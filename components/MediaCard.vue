@@ -130,7 +130,7 @@ const cardAction = (media: Media) => {
             :items="items" :popper="{ placement: 'bottom-start' }"
             @click.stop
         >
-          <UButton icon="i-lucide-menu" color="neutral" variant="ghost" />
+          <UButton icon="i-heroicons-ellipsis-vertical" color="neutral" variant="ghost" />
         </UDropdown>
       </div>
     </div>
