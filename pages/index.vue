@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import MediaList from '@/components/MediaList.vue';
+import { useModalsStore } from '~/stores/modals'
 
 definePageMeta({
   key: 'home',
   keepalive: true,
 })
 
-const isOpen = ref(false)
+const modalsStore = useModalsStore()
+
 const name = ref('')
 const subtitle = ref('')
 const right = ref(false)
@@ -70,7 +72,7 @@ async function addMedia() {
       created_at: new Date().toISOString()
     });
     
-    isOpen.value = false;
+    modalsStore.create = false;
     
     name.value = '';
     subtitle.value = '';
@@ -91,11 +93,11 @@ async function addMedia() {
 }
 
 function openDialog() {
-  isOpen.value = true
+  modalsStore.create = true
 }
 
 function closeDialog() {
-  isOpen.value = false
+  modalsStore.create = false
   if (previewUrl.value) {
     URL.revokeObjectURL(previewUrl.value)
     previewUrl.value = ''
@@ -105,7 +107,7 @@ function closeDialog() {
 
 <template>
   <div>
-    <UModal v-model="isOpen">
+    <UModal v-model="modalsStore.create">
       <div class="p-4 space-y-4">
         <UCard>
           <template #header>
@@ -175,17 +177,6 @@ function closeDialog() {
     </UModal>
 
     <MediaList />
-    
-    <div class="fixed bottom-4 right-4">
-      <UButton
-        icon="i-heroicons-plus"
-        color="primary"
-        variant="solid"
-        size="xl"
-        class="rounded-full"
-        @click="openDialog"
-      />
-    </div>
   </div>
 </template>
 

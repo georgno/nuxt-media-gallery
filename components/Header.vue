@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { useSlideoverStore } from '~/stores/slideover';
 import { useMediaStore } from '~/stores/media';
+import { useModalsStore } from '~/stores/modals';
 import { computed } from 'vue';
 
 const slideoverStore = useSlideoverStore()
 const mediaStore = useMediaStore()
+const modalsStore = useModalsStore()
 
 const links = computed(() => {
   const currentMedia = mediaStore.getCurrentMedia
@@ -26,7 +28,7 @@ const links = computed(() => {
     label: 'Add',
     icon: 'i-heroicons-plus',
     click: () => {
-      console.log('Add clicked')
+      modalsStore.toggleCreate()
     }
   }]]
 })
