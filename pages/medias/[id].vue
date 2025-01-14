@@ -39,7 +39,6 @@ definePageMeta({
                 <h1 class="ps-4 text-2xl">View Media</h1>
               </div>
               <div class="flex">
-                <UButton color="green" icon="i-heroicons-pencil-square" iconPosition="left" class="mb-3 me-3">Edit</UButton>
                 <UButton color="red" icon="i-heroicons-trash" iconPosition="left" class="mb-3">Delete</UButton>
               </div>
             </div>

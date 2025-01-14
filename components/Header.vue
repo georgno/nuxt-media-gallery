@@ -24,13 +24,13 @@ const links = computed(() => {
       to: 'medias/' + currentMedia?.id ? undefined : '/',
       active: currentMedia ? true : false
     }
-  ], [{
+  ], !currentMedia ? [{
     label: 'Add',
     icon: 'i-heroicons-plus',
     click: () => {
       modalsStore.toggleCreate()
     }
-  }]]
+  }] : []]
 })
 </script>
 
