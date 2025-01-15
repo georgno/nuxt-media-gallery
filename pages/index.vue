@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import MediaList from '@/components/MediaList.vue';
-import AddMediaModal from '@/components/AddMediaModal.vue';
 import { useModalsStore } from '~/stores/modals'
 
 definePageMeta({
   key: 'home',
-  keepalive: true,
 })
 
 const modalsStore = useModalsStore()

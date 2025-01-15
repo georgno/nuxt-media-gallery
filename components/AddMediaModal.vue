@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useModalsStore } from '~/stores/modals'
 import { useMediaStore } from '~/stores/media'
+import { onUnmounted } from 'vue'
 
 const modalsStore = useModalsStore()
 const mediaStore = useMediaStore()
