@@ -31,8 +31,10 @@
 
 <script setup lang="ts">
 import { useSlideoverStore } from '~/stores/slideover'
+import { useMediaStore } from '~/stores/media'
 
 const slideoverStore = useSlideoverStore()
+const mediaStore = useMediaStore()
 
 const menuList = [
   {
@@ -51,9 +53,10 @@ defineShortcuts({
   o: () => slideoverStore.toggle()
 })
 
-const mediaStore = useMediaStore()
-
-onMounted(async () => {
-  await mediaStore.initializeMedia()
-})
+// Only initialize if not already initialized
+if (!mediaStore.isInitialized) {
+  mediaStore.initializeMedia().catch(error => {
+    console.error('Failed to initialize media store:', error)
+  })
+}
 </script>

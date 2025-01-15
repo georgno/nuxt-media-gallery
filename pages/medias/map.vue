@@ -1,17 +1,8 @@
 <script setup lang="ts">
-import L from 'leaflet'
-import { ref } from 'vue';
-import { onMounted } from 'vue'
-
-onMounted(() => {
-  console.log(L)
-})
-
-definePageMeta({
-  layout: false
-})
+import { ref, onMounted } from 'vue';
 
 const map = ref(null) as any;
+let L: any = null;
 
 // Create locations data (20 locations around Nantes)
 const locations = [
@@ -37,37 +28,57 @@ const locations = [
   { name: 'Basse-Goulaine', lat: 47.2, lng: -1.483 }
 ];
 
+onMounted(async () => {
+  try {
+    // Dynamically import Leaflet only on client side
+    L = (await import('leaflet')).default;
+    console.log(L);
+  } catch (error) {
+    console.error('Error initializing map:', error);
+  }
+});
+
 const onMapReady = () => {
   console.log('Map is ready');
+  if (!map.value?.leafletObject) {
+    console.warn('Map leaflet object not ready');
+    return;
+  }
+  
   useLMarkerCluster({
     leafletObject: map.value.leafletObject,
     markers: locations
   });
 }
+
+definePageMeta({
+  layout: false
+})
 </script>
 
 <template>
     <div class="relative w-full h-full">
       <NuxtLayout name="default-with-footer-content">
         <template #content>
-          <LMap
-              ref="map"
-              :zoom="6"
-              :max-zoom="18"
-              :center="[47.21322, -1.559482]"
-              :use-global-leaflet="true"
-              @ready="onMapReady"
-              style="height: 90vh"
-              class="absolute inset-0 z-0 top-12 overflow-clip"
-          >
-            <LTileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution="&amp;copy; <a href=&quot;https://www.openstreetmap.org/&quot;>OpenStreetMap</a> contributors"
-                layer-type="base"
-                name="OpenStreetMap"
-            />
-          </LMap>
-
+          <ClientOnly>
+            <LMap
+                ref="map"
+                :zoom="6"
+                :max-zoom="18"
+                :center="[47.21322, -1.559482]"
+                :use-global-leaflet="true"
+                @ready="onMapReady"
+                style="height: 90vh"
+                class="absolute inset-0 z-0 top-12 overflow-clip"
+            >
+              <LTileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution="&amp;copy; <a href=&quot;https://www.openstreetmap.org/&quot;>OpenStreetMap</a> contributors"
+                  layer-type="base"
+                  name="OpenStreetMap"
+              />
+            </LMap>
+          </ClientOnly>
         </template>
         <template #footer>
           <UButton slot="footer" color="gray" variant="ghost" to="/" icon="i-heroicons-arrow-left" iconPosition="left" class="mb-3 relative z-10">Back</UButton>
