@@ -21,7 +21,7 @@ const links = computed(() => {
     },
     {
       label: currentMedia?.title || 'Media Gallery',
-      to: 'medias/' + currentMedia?.id ? undefined : '/',
+      to: currentMedia ? currentMedia?.id : '/',
       active: currentMedia ? true : false
     }
   ], !currentMedia ? [{

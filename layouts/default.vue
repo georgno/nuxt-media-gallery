@@ -22,8 +22,14 @@
 
 <script setup lang="ts">
 import { useSlideoverStore } from '~/stores/slideover'
+import { useRoute } from 'vue-router'
 
+const route = useRoute()
 const slideoverStore = useSlideoverStore()
+
+watch(() => route.path, () => {
+  slideoverStore.close()
+})
 
 defineShortcuts({
   o: () => slideoverStore.toggle()
