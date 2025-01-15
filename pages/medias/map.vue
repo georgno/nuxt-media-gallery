@@ -1,25 +1,3 @@
-<template>
-  <ClientOnly>
-    <div style="height:100vh">
-      <LMap
-          ref="map"
-          :zoom="6"
-          :max-zoom="18"
-          :center="[47.21322, -1.559482]"
-          :use-global-leaflet="true"
-          @ready="onMapReady"
-      >
-        <LTileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution="&amp;copy; <a href=&quot;https://www.openstreetmap.org/&quot;>OpenStreetMap</a> contributors"
-            layer-type="base"
-            name="OpenStreetMap"
-        />
-      </LMap>
-    </div>
-  </ClientOnly>
-</template>
-
 <script setup lang="ts">
 import L from 'leaflet'
 import { ref } from 'vue';
@@ -27,6 +5,10 @@ import { onMounted } from 'vue'
 
 onMounted(() => {
   console.log(L)
+})
+
+definePageMeta({
+  layout: false
 })
 
 const map = ref(null) as any;
@@ -63,3 +45,33 @@ const onMapReady = () => {
   });
 }
 </script>
+
+<template>
+    <div class="relative w-full h-full">
+      <NuxtLayout name="default-with-footer-content">
+        <template #content>
+          <LMap
+              ref="map"
+              :zoom="6"
+              :max-zoom="18"
+              :center="[47.21322, -1.559482]"
+              :use-global-leaflet="true"
+              @ready="onMapReady"
+              style="height: 90vh"
+              class="absolute inset-0 z-0 top-12 overflow-clip"
+          >
+            <LTileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution="&amp;copy; <a href=&quot;https://www.openstreetmap.org/&quot;>OpenStreetMap</a> contributors"
+                layer-type="base"
+                name="OpenStreetMap"
+            />
+          </LMap>
+
+        </template>
+        <template #footer>
+          <UButton slot="footer" color="gray" variant="ghost" to="/" icon="i-heroicons-arrow-left" iconPosition="left" class="mb-3 relative z-10">Back</UButton>
+        </template>
+      </NuxtLayout>
+    </div>
+</template>

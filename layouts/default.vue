@@ -44,6 +44,11 @@ const menuList = [
     to: '/'
   },
   {
+    label: 'Map',
+    icon: 'i-heroicons-map',
+    to: '/medias/map'
+  },
+  {
     label: 'Settings',
     icon: 'i-heroicons-cog',
     to: '/settings'
