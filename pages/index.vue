@@ -16,7 +16,7 @@ function openDialog() {
 </script>
 
 <template>
-  <div>
+  <div class="h-full">
     <AddMediaModal />
     <MediaList />
     <UButton
