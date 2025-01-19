@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="h-screen flex flex-col">
-      <Header/>
+      <Header :show-add-button=true />
       <main class="p-4 flex-grow">
         <slot />
       </main>

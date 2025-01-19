@@ -8,10 +8,14 @@ const slideoverStore = useSlideoverStore()
 const mediaStore = useMediaStore()
 const modalsStore = useModalsStore()
 
+const props = defineProps<{
+  showAddButton: boolean
+}>();
+
 const links = computed(() => {
   const currentMedia = mediaStore.getCurrentMedia
 
-  return [[
+  let menuItems = [[
     {
       label: '',
       icon: 'i-heroicons-bars-3',
@@ -24,13 +28,19 @@ const links = computed(() => {
       to: currentMedia ? currentMedia?.id : '/',
       active: currentMedia ? true : false
     }
-  ], !currentMedia ? [{
-    label: 'Add',
-    icon: 'i-heroicons-plus',
-    click: () => {
-      modalsStore.toggleCreate()
-    }
-  }] : []]
+  ]]
+
+  if (props.showAddButton) {
+    menuItems.push([{
+      label: 'Add',
+      icon: 'i-heroicons-plus',
+      click: () => {
+        modalsStore.toggleCreate()
+      }
+    }])
+  }
+
+  return menuItems
 })
 </script>
 

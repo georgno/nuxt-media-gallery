@@ -30,15 +30,20 @@ const items = [
   [{
     label: 'Edit',
     icon: 'i-heroicons-pencil-square-20-solid',
-    shortcuts: ['E'],
+    shortcuts: ['Ctrl', 'E'],
     click: () => handleEditClick(props.media)
-  }, {
+  }], [{
     label: 'Delete',
     icon: 'i-heroicons-trash-20-solid',
-    shortcuts: ['⌘', 'D'],
+    shortcuts: ['Ctrl', 'D'],
     click: () => handleDeleteClick(props.media)
   }
 ]]
+
+defineShortcuts({
+  meta_e: () => handleEditClick(props.media),
+  meta_d: () => handleDeleteClick(props.media)
+});
 
 const handleEditClick = (media: Media) => {
   editTitle.value = media.title;
@@ -79,7 +84,6 @@ const handleUpdateMedia = async (media: Media) => {
 const handleDeleteClick = (media: Media) => {
   mediaToDelete.value = media;
   deleteDialog.value = true;
-  menuRef.value?.hide();
 };
 
 const handleConfirmDelete = async () => {
@@ -126,11 +130,8 @@ const cardAction = (media: Media) => {
 
       <!-- Actions section -->
       <div class="flex items-center justify-center px-2">
-        <UDropdown
-            :items="items" :popper="{ placement: 'bottom-start' }"
-            @click.stop
-        >
-          <UButton icon="i-heroicons-ellipsis-vertical" color="neutral" variant="ghost" />
+        <UDropdown :items="items" :popper="{ placement: 'bottom-start' }" @click.stop>
+          <UButton icon="i-heroicons-ellipsis-vertical" variant="ghost" />
         </UDropdown>
       </div>
     </div>

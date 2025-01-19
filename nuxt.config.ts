@@ -8,13 +8,14 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@nuxt/icon',
     '@nuxtjs/tailwindcss',
-    '@nuxtjs/leaflet',
-    '@nuxtjs/color-mode'
+    '@nuxtjs/color-mode',
+    'nuxt-maplibre'
   ],
   runtimeConfig: {
     public: {
       apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://garden2.test:8212',
-    }
+      mapTileApiKey: process.env.MAPTILER_KEY
+    },
   },
   app: {
     pageTransition: { name: 'page', mode: 'out-in' }
@@ -23,7 +24,4 @@ export default defineNuxtConfig({
     path: '~/components',
     pathPrefix: false
   }],
-  leaflet: {
-    markerCluster: true
-  }
 })
