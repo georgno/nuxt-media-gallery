@@ -6,6 +6,7 @@ import {
   MglMap,
   MglMarker
 } from '@indoorequal/vue-maplibre-gl';
+import {LngLat} from "maplibre-gl";
 
 
 const mediaStore = useMediaStore();
@@ -88,7 +89,7 @@ onMounted(() => {
 const config = useRuntimeConfig()
 let styleKey = config.public.mapTileApiKey;
 const style = 'https://api.maptiler.com/maps/streets-v2/style.json?key=' + styleKey;
-const center = startPoint;
+const center = startPoint as LngLat;
 const zoom = 10;
 
 definePageMeta({
@@ -122,7 +123,7 @@ definePageMeta({
         </mgl-map>
       </template>
       <template #footer>
-        <UButton slot="footer" color="gray" variant="ghost" to="/" icon="i-heroicons-arrow-left" iconPosition="left" class="mb-3 relative z-10">Back</UButton>
+        <UButton slot="footer" color="gray" variant="ghost" @click="$router.back()" icon="i-heroicons-arrow-left" iconPosition="left" class="mb-3">Back</UButton>
       </template>
     </NuxtLayout>
   </div>

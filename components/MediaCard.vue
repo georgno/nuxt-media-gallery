@@ -23,16 +23,19 @@ const editDialog = ref(false);
 const editTitle = ref('');
 const editSubtitle = ref('');
 
-const deleteDialog = ref(false);
-const mediaToDelete = ref<Media | null>(null);
-
 const items = [
+    [{
+      label: props.media.title,
+      disabled: true
+    }
+
+    ],
   [{
     label: 'Edit',
     icon: 'i-heroicons-pencil-square-20-solid',
     shortcuts: ['Ctrl', 'E'],
     click: () => handleEditClick(props.media)
-  }], [{
+  }, {
     label: 'Delete',
     icon: 'i-heroicons-trash-20-solid',
     shortcuts: ['Ctrl', 'D'],
@@ -81,21 +84,12 @@ const handleUpdateMedia = async (media: Media) => {
   }
 };
 
+const deleteDialog = ref(false);
+const mediaToDelete = ref<Media | null>(null);
+
 const handleDeleteClick = (media: Media) => {
   mediaToDelete.value = media;
   deleteDialog.value = true;
-};
-
-const handleConfirmDelete = async () => {
-  if (!mediaToDelete.value) return;
-  
-  try {
-    await mh.deleteItem(String(mediaToDelete.value.id));
-    mediaStore.deleteMedia(mediaToDelete.value.id);
-    deleteDialog.value = false;
-  } catch (error) {
-    console.error('Error deleting media:', error);
-  }
 };
 
 const cardAction = (media: Media) => {
@@ -183,30 +177,6 @@ const cardAction = (media: Media) => {
       </UCard>
     </UModal>
 
-    <!-- Delete Dialog -->
-    <UModal v-model="deleteDialog">
-      <UCard>
-        <template #header>
-          <h3 class="text-xl font-bold">Confirm Delete</h3>
-        </template>
-
-        <p>Are you sure you want to delete "{{ mediaToDelete?.title }}"?</p>
-
-        <template #footer>
-          <div class="flex justify-end gap-2">
-            <UButton 
-              label="Cancel" 
-              variant="ghost" 
-              @click="deleteDialog = false"
-            />
-            <UButton 
-              label="Delete" 
-              color="red" 
-              @click="handleConfirmDelete"
-            />
-          </div>
-        </template>
-      </UCard>
-    </UModal>
+    <DeleteMediaModal v-model="deleteDialog" :media-to-delete="mediaToDelete" />
   </UCard>
 </template>

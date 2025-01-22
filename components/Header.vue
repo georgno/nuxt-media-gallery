@@ -4,23 +4,27 @@ import { useMediaStore } from '~/stores/media';
 import { useModalsStore } from '~/stores/modals';
 import { computed } from 'vue';
 
-const slideoverStore = useSlideoverStore()
-const mediaStore = useMediaStore()
-const modalsStore = useModalsStore()
+const slideoverStore = useSlideoverStore();
+const mediaStore = useMediaStore();
+const modalsStore = useModalsStore();
 
 const props = defineProps<{
-  showAddButton: boolean
+  buttons?: Array<{
+    label: string;
+    icon: string;
+    click: () => void;
+  }>;
 }>();
 
 const links = computed(() => {
-  const currentMedia = mediaStore.getCurrentMedia
+  const currentMedia = mediaStore.getCurrentMedia;
 
   let menuItems = [[
     {
       label: '',
       icon: 'i-heroicons-bars-3',
       click: () => {
-        slideoverStore.toggle()
+        slideoverStore.toggle();
       }
     },
     {
@@ -28,20 +32,14 @@ const links = computed(() => {
       to: currentMedia ? currentMedia?.id : '/',
       active: currentMedia ? true : false
     }
-  ]]
+  ]];
 
-  if (props.showAddButton) {
-    menuItems.push([{
-      label: 'Add',
-      icon: 'i-heroicons-plus',
-      click: () => {
-        modalsStore.toggleCreate()
-      }
-    }])
+  if (props.buttons && props.buttons.length > 0) {
+    menuItems.push(props.buttons);
   }
 
-  return menuItems
-})
+  return menuItems;
+});
 </script>
 
 <template>
@@ -51,5 +49,4 @@ const links = computed(() => {
 </template>
 
 <style scoped>
-
 </style>
