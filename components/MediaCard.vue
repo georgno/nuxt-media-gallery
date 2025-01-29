@@ -23,25 +23,28 @@ const editDialog = ref(false);
 const editTitle = ref('');
 const editSubtitle = ref('');
 
-const items = [
-    [{
+const items = computed(() => [
+  [
+    {
       label: props.media.title,
-      disabled: true
-    }
-
-    ],
-  [{
-    label: 'Edit',
-    icon: 'i-heroicons-pencil-square-20-solid',
-    shortcuts: ['Ctrl', 'E'],
-    click: () => handleEditClick(props.media)
-  }, {
-    label: 'Delete',
-    icon: 'i-heroicons-trash-20-solid',
-    shortcuts: ['Ctrl', 'D'],
-    click: () => handleDeleteClick(props.media)
-  }
-]]
+      disabled: true,
+    },
+  ],
+  [
+    {
+      label: 'Edit',
+      icon: 'i-heroicons-pencil-square-20-solid',
+      shortcuts: ['Ctrl', 'E'],
+      click: () => handleEditClick(props.media),
+    },
+    {
+      label: 'Delete',
+      icon: 'i-heroicons-trash-20-solid',
+      shortcuts: ['Ctrl', 'D'],
+      click: () => handleDeleteClick(props.media),
+    },
+  ],
+]);
 
 defineShortcuts({
   meta_e: () => handleEditClick(props.media),
