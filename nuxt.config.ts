@@ -11,6 +11,10 @@ export default defineNuxtConfig({
     '@nuxtjs/color-mode',
     'nuxt-maplibre'
   ],
+  colorMode: {
+    classSuffix: '',
+    fallback: 'light',
+  },
   runtimeConfig: {
     public: {
       apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://garden2.test:8212',

@@ -43,6 +43,12 @@ const handleDeleteClick = (media: Ref<Media | null>) => {
   }
 };
 
+const router = useRouter();
+
+const handleBack = () => {
+  router.back();
+};
+
 </script>
 
 <template>
@@ -55,7 +61,7 @@ const handleDeleteClick = (media: Ref<Media | null>) => {
           </div>
         </template>
         <template #footer>
-          <UButton slot="footer" color="gray" variant="ghost" @click="$router.back()" icon="i-heroicons-arrow-left" iconPosition="left" class="mb-3">Back</UButton>
+          <UButton slot="footer" color="gray" variant="ghost" @click="handleBack" icon="i-heroicons-arrow-left" iconPosition="left" class="mb-3">Back</UButton>
         </template>
     </NuxtLayout>
   </div>

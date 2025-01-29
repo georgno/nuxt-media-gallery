@@ -29,7 +29,7 @@ const links = computed(() => {
     },
     {
       label: currentMedia?.title || 'Media Gallery',
-      to: currentMedia ? currentMedia?.id : '/',
+      to: currentMedia ? `/medias/${currentMedia.id}` : '/',
       active: currentMedia ? true : false
     }
   ]];

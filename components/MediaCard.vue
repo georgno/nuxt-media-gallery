@@ -94,16 +94,19 @@ const handleDeleteClick = (media: Media) => {
 
 const cardAction = (media: Media) => {
   router.push({
-    path: `/medias/${media.id}`,
+    path: `/medias/${media.id.toString()}`,
   });
 };
 </script>
 
 <template>
-  <UCard 
-    class="my-card" 
-    @click="cardAction(media)"
-    :ui="{ base: 'overflow-hidden', background: $colorMode.value === 'dark' ? 'bg-gray-900' : 'bg-white' }"
+  <UCard
+      class="my-card"
+      @click="cardAction(media)"
+      :ui="{
+      base: 'overflow-hidden',
+      background: 'bg-white dark:bg-gray-900'
+    }"
   >
     <div class="flex">
         <div class="content-center aspect-square w-20">

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 const colorMode = useColorMode()
 
-// Create a computed property to handle the color mode binding
 const isDarkMode = computed({
   get: () => colorMode.value === 'dark',
   set: (value: boolean) => {
@@ -23,7 +22,7 @@ const isDarkMode = computed({
             <div class="font-medium">Dark Mode</div>
             <div class="text-sm text-gray-500 dark:text-gray-400">Toggle dark mode appearance</div>
           </div>
-          <UCheckbox size="xl" v-model="isDarkMode" />
+          <UCheckbox size="lg" v-model="isDarkMode" />
         </div>
       </div>
     </UCard>
@@ -31,5 +30,4 @@ const isDarkMode = computed({
 </template>
 
 <style scoped>
-
 </style>

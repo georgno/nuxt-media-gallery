@@ -24,7 +24,7 @@ const handleConfirmDelete = async () => {
     await mh.deleteItem(String(props.mediaToDelete.id));
     mediaStore.deleteMedia(props.mediaToDelete.id);
     emit('update:modelValue', false);
-    router.push('/'); // Add this line to navigate back to root
+    router.push('/');
   } catch (error) {
     console.error('Error deleting media:', error);
   }

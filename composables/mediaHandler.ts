@@ -121,7 +121,7 @@ export const mediaHandler = () => {
         formData.append('subtitle', data.subtitle || '');
 
         try {
-            const response = await fetch(`${baseURL}/api/v1/media/sigo-update-info?XDEBUG_SESSION_START=19740`, {
+            const response = await fetch(`${baseURL}/api/v1/media/sigo-update-info`, {
                 method: 'POST',
                 body: formData,
             });
