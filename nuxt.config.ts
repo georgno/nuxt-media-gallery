@@ -9,7 +9,6 @@ export default defineNuxtConfig({
     '@nuxt/icon',
     '@nuxtjs/tailwindcss',
     '@nuxtjs/color-mode',
-    'nuxt-maplibre'
   ],
   colorMode: {
     classSuffix: '',
@@ -17,12 +16,8 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://garden2.test:8212',
-      mapTileApiKey: process.env.MAPTILER_KEY
+      apiBase: process.env.NUXT_PUBLIC_API_BASE,
     },
-  },
-  app: {
-    pageTransition: { name: 'page', mode: 'out-in' }
   },
   components: [{
     path: '~/components',
