@@ -1,8 +1,22 @@
-# Nuxt Minimal Starter
+# Nuxt Media Gallery
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+A simple media gallery built with Nuxt.js and Tailwind CSS for educational purposes.
+
+![screenshot.png](screenshot.png)
+
 
 ## Setup
+
+create a `.env` file in the root of the project and add the following environment variables:
+
+```bash
+# .env
+NUXT_PUBLIC_API_BASE=your_access_key
+```
+
+of course you would need an api that provides the endpoints that I used 😅
+
+---
 
 Make sure to install dependencies:
 
@@ -71,5 +85,3 @@ yarn preview
 # bun
 bun run preview
 ```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
